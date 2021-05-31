@@ -6,11 +6,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using SlackNet.AspNetCore;
 
 namespace lookaroond
 {
     public class Startup
     {
+        private SlackConfig _slackConfig;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -21,10 +24,16 @@ namespace lookaroond
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            _slackConfig = new SlackConfig();
+            Configuration.Bind(_slackConfig);
             services.AddControllers();
             services.Configure<AppConfig>(Configuration);
             services.AddSingleton<DbClient>();
             services.AddSingleton<IHostedService, MongoService>();
+            services.AddSlackNet(c =>
+            {
+                c.UseApiToken(_slackConfig.AccessToken);
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "lookaroond", Version = "v1" });
@@ -40,7 +49,7 @@ namespace lookaroond
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "lookaroond v1"));
             }
-
+            app.UseSlackNet(c => c.UseSigningSecret(_slackConfig.SigningSecret));
             app.UseHttpsRedirection();
 
             app.UseRouting();
