@@ -1,3 +1,5 @@
+using System;
+
 namespace lookaroond.DB
 {
     public class AppConfig
@@ -10,5 +12,17 @@ namespace lookaroond.DB
     {
         public string AccessToken { get; set; }
         public string SigningSecret { get; set; }
+
+        public void Assert()
+        {
+            if (string.IsNullOrEmpty(AccessToken))
+            {
+                throw new ApplicationException("no Slack AccessToken in configuration");
+            }
+            if (string.IsNullOrEmpty(SigningSecret))
+            {
+                throw new ApplicationException("no Slack SigningSecret in configuration");
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using SlackNet.AspNetCore;
 
 namespace lookaroond
@@ -26,6 +27,7 @@ namespace lookaroond
         {
             _slackConfig = new SlackConfig();
             Configuration.Bind(_slackConfig);
+            _slackConfig.Assert();
             services.AddControllers();
             services.Configure<AppConfig>(Configuration);
             services.AddSingleton<DbClient>();
@@ -49,6 +51,7 @@ namespace lookaroond
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "lookaroond v1"));
             }
+            app.UseSerilogRequestLogging();
             app.UseSlackNet(c => c.UseSigningSecret(_slackConfig.SigningSecret));
             app.UseHttpsRedirection();
 

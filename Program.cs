@@ -19,7 +19,7 @@ namespace lookaroond
 
         public static IHostBuilder CreateHostBuilder(string[] args) 
         {
-             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(a =>
                 {
