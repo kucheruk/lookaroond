@@ -1,0 +1,44 @@
+version: '3.4'
+
+services:
+  lookaroond.app:
+    container_name: lookaroond_api
+    build:
+      context: api/.
+    restart:
+      always
+    volumes:
+      - /root/.nuget:/root/.nuget
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "10"
+
+  lookaroond.proxy:
+    volumes:
+      - /root/data/caddy_data/:/data
+      - /root/data/caddy_config/:/config
+    container_name: proxy
+    restart:
+      always
+    build:
+      context: ${lookaroond_proxy:-./proxy}
+    ports:
+      - 443:443
+      - 80:80
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "10"
+
+  lookaroond.db:
+    image: mongo:4.4
+    container_name: lookaroond_db
+    restart:
+      always
+    volumes:
+      -  /root/data/lookaroond:/data/db
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "10"
