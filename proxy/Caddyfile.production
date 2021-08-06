@@ -1,5 +1,5 @@
 lookaroond.kucheruk.net
 
 root * /var/www
-reverse_proxy /api/* lookaroond_api:5000
+reverse_proxy /api/* api:8192
 file_server

@@ -8,6 +8,7 @@ namespace lookaroond.Controllers
 {
     public class SlackHttp
     {
+        private static readonly Uri Base = new("https://slack.com");
         private readonly HttpClient _client;
         private readonly ILogger<SlackHttp> _logger;
 
@@ -15,7 +16,6 @@ namespace lookaroond.Controllers
         {
             _client = client;
             _logger = logger;
-            _client.BaseAddress = new Uri("https://slack.com");
         }
 
         public async Task<SlackOauthResponse> OauthAccessAsync(string clientId, string clientSecret,
@@ -23,10 +23,11 @@ namespace lookaroond.Controllers
         {
             var resp = await _client.SendAsync(new HttpRequestMessage
             {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri("/api/oauth.v2.access"),
-                Headers = {{"client_id", clientId}, {"client_secret", clientSecret}, {"code", code}}
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(Base, $"/api/oauth.v2.access?client_id={clientId}&client_secret={clientSecret}&code={code}")
             });
+            _logger.LogInformation("Send /api/oauth.v2.access {ClientId} {ClientSecret} {Code}", clientId, clientSecret, code);
+            _logger.LogInformation("response {Body}", await resp.Content.ReadAsStringAsync());
             if (resp.IsSuccessStatusCode)
             {
                 return await resp.Content.ReadFromJsonAsync<SlackOauthResponse>();

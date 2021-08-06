@@ -32,6 +32,7 @@ namespace lookaroond
             services.Configure<AppConfig>(Configuration);
             services.Configure<SlackConfig>(Configuration.GetSection("Slack"));
             services.AddSingleton<DbClient>();
+            services.AddTransient<ISlackEventHandler, SlackEventChallengeHandler>();
             services.AddScoped<SlackRequestContainer>();
             services.AddSingleton<SlackRequestSignature>();
             services.AddSingleton<StoreAccessTokenCommand>();
@@ -44,12 +45,12 @@ namespace lookaroond
         {
             // if (env.IsDevelopment())
             // {
-                app.UseDeveloperExceptionPage();
+            app.UseDeveloperExceptionPage();
             // }
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();            
+            app.UseAuthorization();
             app.UseMiddleware<CheckSlackSignatureMiddleware>();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
