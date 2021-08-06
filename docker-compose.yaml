@@ -1,8 +1,9 @@
 version: '3.4'
 
 services:
-  lookaroond.app:
-    container_name: lookaroond_api
+  api:
+    env_file:
+      - ~/.lookaroond.env
     build:
       context: api/.
     restart:
@@ -14,11 +15,11 @@ services:
         max-size: "5m"
         max-file: "10"
 
-  lookaroond.proxy:
+  proxy:
+    build: proxy/
     volumes:
       - /root/data/caddy_data/:/data
       - /root/data/caddy_config/:/config
-    container_name: proxy
     restart:
       always
     build:
@@ -31,9 +32,8 @@ services:
         max-size: "5m"
         max-file: "10"
 
-  lookaroond.db:
+  db:
     image: mongo:4.4
-    container_name: lookaroond_db
     restart:
       always
     volumes:

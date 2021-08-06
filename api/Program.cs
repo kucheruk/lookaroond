@@ -17,7 +17,7 @@ namespace lookaroond
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) 
+        public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             return Host.CreateDefaultBuilder(args)
@@ -39,7 +39,6 @@ namespace lookaroond
                     webBuilder.UseStartup<Startup>()
                         .UseSerilog((a, l) =>
                         {
-                         
                             l
                                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                                 .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
@@ -56,8 +55,8 @@ namespace lookaroond
                         })
                         .UseKestrel(k =>
                         {
-                            k.ListenAnyIP(8192); 
-                            k.Limits.MaxRequestBodySize = 100*1024*1024; // or a given limit
+                            k.ListenAnyIP(8192);
+                            k.Limits.MaxRequestBodySize = 100 * 1024 * 1024; // or a given limit
                         });
                 });
         }

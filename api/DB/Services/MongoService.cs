@@ -17,7 +17,7 @@ namespace lookaroond.DB.Services
             _db = db;
             _logger = logger;
         }
-        
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
             try
@@ -33,6 +33,7 @@ namespace lookaroond.DB.Services
                 _logger.LogError(ex, "Error initializing mongoDb connection");
                 throw;
             }
+
             return Task.CompletedTask;
         }
 
